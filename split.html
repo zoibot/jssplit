@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<title>Split</title>
+<script type="text/javascript" src="http://code.jquery.com/jquery-1.8.3.min.js"></script>
+<script type="text/javascript">
+$(function () {
+    var start_button = $("#start");
+    var reset_button = $("#reset");
+    var start_time = null;
+    var last_split_time = null;
+    var update_timeout = null;
+    start_button.click(start);
+    reset_button.click(reset);
+    $(document).keypress(function (e)
+    {
+        if (e.which === 32)
+        {
+            start();
+        }
+        else if (e.which === 114)
+        {
+            reset();
+        }
+    });
+
+    function start() {
+        last_split_time = new Date();
+        if (!start_time) {
+            start_time = last_split_time;
+        }
+        else
+        {
+            $("#results").append($("<div>"+get_current_time(last_split_time)+"</div>"));
+        }
+        if (!update_timeout)
+        {
+            update_timeout = setInterval(update, 100)
+        }
+    }
+
+    function reset() {
+        start_time = null;
+        last_split_time = null;
+        if (update_timeout)
+        {
+            clearTimeout(update_timeout);
+        }
+        update_timeout = null;
+        $("#counter").text("");
+        $("#results").html("");
+    }
+
+    function update() {
+        var time = get_current_time(new Date());
+        $("#counter").text(time);
+    }
+
+    function get_current_time(date) {
+        var ms = (date - start_time);
+        var hours = Math.floor(ms/(60*60*1000))
+        var mins = Math.floor((ms%(60*60*1000))/(60*1000));
+        var seconds = ((ms%(60*1000))/1000).toFixed(1);
+        return hours+":"+mins+":"+seconds;
+    }
+});
+</script>
+<style>
+
+</style>
+</head>
+<body>
+<div id="results">
+</div>
+<div id="counter">
+</div>
+<input id="start" type="button" value="Start/Split" />
+<input id="reset" type="button" value="Reset" />
+</body>
+</html>
